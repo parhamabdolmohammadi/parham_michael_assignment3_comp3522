@@ -2,10 +2,12 @@
 # Student number:
 import argparse
 
+import requests
+
 from request import Request
 
 
-def setup_request_commandline() -> Request:
+def setup_request_commandline() -> Request | list[Request]:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("mode", choices=["pokemon", "ability", "move"])
@@ -36,15 +38,37 @@ def setup_request_commandline() -> Request:
                 quit()
 
 
+        requests = []
 
-        request = Request()
-        request.mode = args.mode
-        request.input_file = args.inputfile
-        request.input_data = args.inputdata
-        request.expanded = args.expanded
-        request.output_file = args.output
 
-        return request
+        if args.inputdata:
+            request = Request()
+            request.mode = args.mode
+            request.input_file = args.inputfile
+            request.input_data = args.inputdata
+            request.expanded = args.expanded
+            request.output_file = args.output
+            request.isFromFile = False
+
+            requests.append(request)
+
+        else:
+
+            with open(args.inputfile, "r") as input_file:
+                for line in input_file:
+                    line = line.strip()
+
+                    if line != "":
+                        request = Request()
+                        request.mode = args.mode
+                        request.input_data = line
+                        request.expanded = args.expanded
+                        request.output_file = args.output
+                        request.isFromFile = False
+                        requests.append(request)
+
+
+        return requests
 
     except Exception as e:
         print(f"Error! Could not read arguments.\n{e}")
@@ -52,8 +76,10 @@ def setup_request_commandline() -> Request:
 
 
 
-def main(request: Request):
-    print(f"Request: {request}")
+def main(requests: list[Request]):
+    for request in requests:
+        print(request)
+        print("")
 
 
 if __name__ == '__main__':
