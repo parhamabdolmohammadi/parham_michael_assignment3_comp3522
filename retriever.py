@@ -13,18 +13,19 @@ class Retriever(abc.ABC):
             pokedex_object_separated = [pk_object for pk_object in pokedex_object_dict]
             kwargs_coroutines = [self.parse(pk_object) for pk_object in pokedex_object_separated]
             kwargs_all = await asyncio.gather(*kwargs_coroutines)
+            # print(f"kwargs_all: {kwargs_all}") # for debugging only
             generate_object_coroutines = [self.generate_pokedex_object(**kwargs) for kwargs in kwargs_all]
             return await asyncio.gather(*generate_object_coroutines)
 
     async def get_request(self, url, request, session):
         id_number = request.input_data
-        # print(id_number) - for debugging only
+        # print(id_number) # for debugging only
         target_url = url + id_number
-        # print(target_url) - for debugging only
-        # print(f"getting url: {target_url}") - for debugging only
+        # print(target_url) # for debugging only
+        # print(f"getting url: {target_url}") # for debugging only
         response = await session.request(method="GET", url=target_url)
         json_dict = await response.json()
-        # print(json_dict) - for debugging only
+        # print(json_dict) # for debugging only
         return json_dict
 
     @abc.abstractmethod
@@ -74,7 +75,17 @@ class AbilityRetriever(Retriever):
 class MoveRetriever(Retriever):
 
     async def parse(self, json):
-        pass
+        kwargs = {}
+        kwargs["name"] = json["name"]
+        kwargs["id"] = json["id"]
+        kwargs["generation"] = json["generation"]["name"]
+        kwargs["accuracy"] = json["accuracy"]
+        kwargs["pp"] = json["pp"]
+        kwargs["power"] = json["power"]
+        kwargs["type"] = json["type"]["name"]
+        kwargs["damage_class"] = json["damage_class"]["name"]
+        kwargs["effect"] = json["effect_entries"][0]["short_effect"]
+        return kwargs
 
     async def generate_pokedex_object(self, **kwargs):
         return Move(**kwargs)
@@ -83,7 +94,11 @@ class MoveRetriever(Retriever):
 class StatRetriever(Retriever):
 
     async def parse(self, json):
-        pass
+        kwargs = {}
+        kwargs["name"] = json["name"]
+        kwargs["id"] = json["id"]
+        kwargs["is_battle_only"] = json["is_battle_only"]
+        return kwargs
 
     async def generate_pokedex_object(self, **kwargs):
         return Stat(**kwargs)

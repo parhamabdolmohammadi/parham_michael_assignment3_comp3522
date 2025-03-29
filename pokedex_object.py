@@ -14,16 +14,15 @@ class PokedexObject(abc.ABC):
     def id(self):
         return self._id
 
-
 class Move(PokedexObject):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._generation = kwargs["kwargs"]
+        self._generation = kwargs["generation"]
         self._accuracy = kwargs["accuracy"]
         self._pp = kwargs["pp"]
         self._power = kwargs["power"]
         self._type = kwargs["type"]
-        self._damage_class = kwargs["damage class"]
+        self._damage_class = kwargs["damage_class"]
         self._effect = kwargs["effect"]
 
     @property
@@ -54,6 +53,19 @@ class Move(PokedexObject):
     def effect(self):
         return self._effect
 
+    def __str__(self):
+        return f"""
+Name: {self.name}
+ID: {self.id}
+Generation: {self.generation}
+Accuracy: {self.accuracy}
+PP: {self.pp}
+Power: {self.power}
+Type: {self.type}
+Damage Class: {self.damage_class}
+Effect(Short): {self.effect}
+"""
+
 
 class Stat(PokedexObject):
     def __init__(self, **kwargs):
@@ -63,6 +75,14 @@ class Stat(PokedexObject):
     @property
     def is_battle_only(self):
         return self._is_battle_only
+
+    def __str__(self):
+        return f"""
+Name: {self.name}
+ID: {self.id}
+Is_Battle_Only: {self.is_battle_only}
+    """
+
 
 
 class Pokemon(PokedexObject):
