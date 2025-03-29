@@ -34,6 +34,10 @@ class PokedexRetrieverFacade:
         self.pokedex_data =  self.retriever.fetch_data(url, requests)
 
 
+    def output_data(self, file_name):
+        pass
+
+
 
 
 
