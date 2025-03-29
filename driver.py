@@ -1,10 +1,12 @@
 # Name:
 # Student number:
 import argparse
+import asyncio
 
 import requests
 
 from request import Request
+from retrieverFacade import PokedexRetrieverFacade
 
 
 def setup_request_commandline() -> Request | list[Request]:
@@ -76,7 +78,11 @@ def setup_request_commandline() -> Request | list[Request]:
 
 
 
-def main(requests: list[Request]):
+async def main(requests: list[Request]):
+    retrieve_facade = PokedexRetrieverFacade()
+    await retrieve_facade.execute_request(requests)
+
+
     for request in requests:
         print(request)
         print("")
@@ -84,4 +90,4 @@ def main(requests: list[Request]):
 
 if __name__ == '__main__':
     request = setup_request_commandline()
-    main(request)
+    asyncio.run(main(request))

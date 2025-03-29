@@ -105,7 +105,7 @@ class Ability(PokedexObject):
         super().__init__(**kwargs)
         self._generation = kwargs["generation"]
         self._effect = kwargs["effect"]
-        self._effect_short = kwargs["effect short"]
+        self._effect_short = kwargs["effect_short"]
         self._pokemon = kwargs["pokemon"]  # Should be a list of Strings
 
     @property
@@ -123,3 +123,13 @@ class Ability(PokedexObject):
     @property
     def pokemon(self):
         return self._pokemon
+
+    def __str__(self):
+        return f"""
+Name: {self.name}
+ID: {self.id}
+Generation: {self.generation}
+Effect: {self.effect}
+Effect(Short): {self.effect_short}
+Pokemon: {", ".join(self.pokemon)}
+"""
