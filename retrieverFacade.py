@@ -23,7 +23,6 @@ class PokedexRetrieverFacade:
 
 
     async def execute_request(self, requests: list[Request]):
-
         mode = requests[0].mode
         retriever_information =  self.RETRIEVERS[mode]
         self.retriever = retriever_information[0]

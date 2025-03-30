@@ -11,6 +11,6 @@ class Request:
             f"Mode: {self.mode}\n"
             f"Input Data: {self.input_data}\n"
             f"Expanded: {self.expanded}\n"
-            f"Output File: {self.output_file}"
+            f"Output File: {self.output_file}\n"
             f"Is From File: {self.isFromFile}"
         )

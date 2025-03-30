@@ -70,7 +70,7 @@ Effect(Short): {self.effect}
 class Stat(PokedexObject):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._is_battle_only = kwargs["is battle only"]
+        self._is_battle_only = kwargs["is_battle_only"]
 
     @property
     def is_battle_only(self):
@@ -94,6 +94,45 @@ class Pokemon(PokedexObject):
         self._types = kwargs["types"]  # Should be a list of String
         self._abilities = kwargs["abilities"]  # Should be a list of Ability objects
         self._moves = kwargs["moves"]  # Should be a list of Move objects
+
+
+    def __str__(self):
+        types = ""
+        for type in self._types:
+            types += type + " "
+
+        stats = "\n".join([str(stat) for stat in self._stats])
+        abilities =  "\n".join([str(ability) for ability in self._abilities])
+        moves = "\n".join([str(move) for move in self._moves])
+
+        # moves = ""
+        # for move in self._moves:
+        #     moves += move + "\n\n "
+
+        tala = f"""
+Name: {self.name}
+ID: {self.id}
+Height: {self.height}
+Weight: {self.weight}
+Types:  {types}
+
+Stats: 
+"------"
+{stats}
+
+Abilities:
+"------"
+{abilities}
+
+Moves:
+"------"
+{moves}
+   
+        """
+
+
+
+        return tala
 
     @property
     def height(self):
