@@ -1,9 +1,9 @@
-# Name:
-# Student number:
+# Name: Michael McBride
+# Student number: A01394787
+
 import argparse
 import asyncio
-
-import requests
+import time
 
 from request import Request
 from retrieverFacade import PokedexRetrieverFacade
@@ -39,20 +39,18 @@ def setup_request_commandline() -> Request | list[Request]:
                 print("Error: file extension must be in txt format.")
                 quit()
 
-
         requests = []
 
-
         if args.inputdata:
-            request = Request()
-            request.mode = args.mode
-            request.input_file = args.inputfile
-            request.input_data = args.inputdata
-            request.expanded = args.expanded
-            request.output_file = args.output
-            request.isFromFile = False
+            new_request = Request()
+            new_request.mode = args.mode
+            new_request.input_file = args.inputfile
+            new_request.input_data = args.inputdata
+            new_request.expanded = args.expanded
+            new_request.output_file = args.output
+            new_request.isFromFile = False
 
-            requests.append(request)
+            requests.append(new_request)
 
         else:
 
@@ -61,14 +59,13 @@ def setup_request_commandline() -> Request | list[Request]:
                     line = line.strip()
 
                     if line != "":
-                        request = Request()
-                        request.mode = args.mode
-                        request.input_data = line
-                        request.expanded = args.expanded
-                        request.output_file = args.output
-                        request.isFromFile = False
-                        requests.append(request)
-
+                        new_request = Request()
+                        new_request.mode = args.mode
+                        new_request.input_data = line
+                        new_request.expanded = args.expanded
+                        new_request.output_file = args.output
+                        new_request.isFromFile = False
+                        requests.append(new_request)
 
         return requests
 
@@ -77,17 +74,31 @@ def setup_request_commandline() -> Request | list[Request]:
         quit()
 
 
+def output_data(file_name, pokedex):
+    if file_name is None:
+        [print(pokedex_object) for pokedex_object in pokedex]
+    else:
+        try:
+            with open(file_name, "a+") as output_file:
+                output_file.write(f"Timestamp: {time.strftime("%d/%m/%Y %H:%M")}\n")
+                output_file.write(f"Number of requests: {len(pokedex)}\n\n")
+                [output_file.write(str(pokedex_object)) for pokedex_object in pokedex]
+        except IOError:
+            print(f"Error encountered writing to {file_name}")
+        else:
+            print(f"Request processed. Please see {file_name}")
+
 
 async def main(requests: list[Request]):
     retrieve_facade = PokedexRetrieverFacade()
-    await retrieve_facade.execute_request(requests)
+    return await retrieve_facade.execute_request(requests)
 
-
-    for request in requests:
-        print(request)
-        print("")
-
+    # For Debugging
+    # for request in requests:
+    #     print(request)
+    #     print("")
 
 if __name__ == '__main__':
     request = setup_request_commandline()
-    asyncio.run(main(request))
+    pokedex_data = asyncio.run(main(request))
+    output_data(request[0].output_file, pokedex_data)

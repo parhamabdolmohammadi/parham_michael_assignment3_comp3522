@@ -14,6 +14,7 @@ class PokedexObject(abc.ABC):
     def id(self):
         return self._id
 
+
 class Move(PokedexObject):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -84,7 +85,6 @@ Is_Battle_Only: {self.is_battle_only}
     """
 
 
-
 class Pokemon(PokedexObject):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -95,14 +95,13 @@ class Pokemon(PokedexObject):
         self._abilities = kwargs["abilities"]  # Should be a list of Ability objects
         self._moves = kwargs["moves"]  # Should be a list of Move objects
 
-
     def __str__(self):
         types = ""
-        for type in self._types:
-            types += type + " "
+        for pk_type in self._types:
+            types += pk_type + " "
 
         stats = "\n".join([str(stat) for stat in self._stats])
-        abilities =  "\n".join([str(ability) for ability in self._abilities])
+        abilities = "\n".join([str(ability) for ability in self._abilities])
         moves = "\n".join([str(move) for move in self._moves])
 
         # moves = ""
@@ -129,8 +128,6 @@ Moves:
 {moves}
    
         """
-
-
 
         return tala
 
