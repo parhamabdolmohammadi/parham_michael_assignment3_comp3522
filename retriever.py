@@ -3,51 +3,68 @@ import aiohttp
 import asyncio
 from pokedex_object import Ability, Pokemon, Move, Stat
 
+# Name: Michael McBride
+# Student number: A01394787
+
+# Name: Parham Abdolmohammadi
+# Student number: A01356970
 
 class Retriever(abc.ABC):
+    """
+    Abstract base class for all retrievers that fetch and parse data from the PokéAPI
+    and convert it into corresponding PokedexObject instances.
+    """
 
     def __init__(self):
+        """
+        Initializes the Retriever with a default value for the expanded flag.
+        """
+
         self.is_expanded = None
 
     async def fetch_data(self, url, requests):
+        """
+        Fetches and processes data for multiple requests asynchronously.
+
+        Args:
+            url (str): Base URL for the API endpoint.
+            requests (list[Request]): List of Request objects.
+
+        Returns:
+            list[PokedexObject]: List of fully constructed PokedexObject instances.
+        """
+
         async with aiohttp.ClientSession() as session:
             self.is_expanded = requests[0].expanded
 
-            #  list of couroutines prepared to be called
             pokedex_object_coroutines = [self.get_request(url, request, session) for request in requests]
-            # print(pokedex_object_coroutines)
 
-            # responses in list of [json_dict, jsondict, .... ]
-            # format (the big json that you see in https://pokeapi.co/api/v2/ability/drizzle for each request
             pokedex_object_dict = await asyncio.gather(*pokedex_object_coroutines)
-            # print("pokedex_object_dict:")
-            # print(pokedex_object_dict)
-            # print("")
 
             pokedex_object_separated = [pk_object for pk_object in pokedex_object_dict]
-            # print("pokedex_object_separated:")
-            # print(pokedex_object_separated)
-            # print("")
 
-            #  coroutine (of calls to parse()
             kwargs_coroutines = [self.parse(pk_object) for pk_object in pokedex_object_separated]
-            # print("kwargs_coroutines:")
-            # print(kwargs_coroutines)
-            # print("")
 
-            # dict of w (extracting the things we want from the fetched json from the specified api
             kwargs_all = await asyncio.gather(*kwargs_coroutines)
-            # print("kwargs_all:")
-            # print(kwargs_all)
-            # print("")
 
-            #  instantiate the corresponding object with the fetched stuff
             generate_object_coroutines = [self.generate_pokedex_object(**kwargs) for kwargs in kwargs_all]
 
             return await asyncio.gather(*generate_object_coroutines)
 
     @staticmethod
     async def fetch_expanded_objects(retriever, urls, session):
+        """
+        Fetches additional detailed objects (like expanded stats, moves, or abilities).
+
+        Args:
+            retriever (Retriever): A retriever instance used to fetch and parse objects.
+            urls (list[str]): List of URLs to fetch.
+            session (aiohttp.ClientSession): The HTTP session to use.
+
+        Returns:
+            list[PokedexObject]: List of parsed and constructed objects.
+        """
+
         pokedex_object_coroutines = [retriever.get_request(url, None, session) for url in urls]
         pokedex_object_dict = await asyncio.gather(*pokedex_object_coroutines)
 
@@ -58,47 +75,82 @@ class Retriever(abc.ABC):
         return await asyncio.gather(*generate_object_coroutines)
 
     async def get_request(self, url, request, session):
+        """
+        Sends an asynchronous GET request to the API and parses the JSON response.
+
+        Args:
+            url (str): Base API endpoint.
+            request (Request | None): Request object with input data, or None for expanded objects.
+            session (aiohttp.ClientSession): HTTP session for the request.
+
+        Returns:
+            dict: Parsed JSON dictionary from the response.
+        """
 
         if not request:
             target_url = url
 
         else:
             id_number_or_name = request.input_data
-            # print("id_number_or_name::")
-            # print(id_number_or_name) # for debugging only
-            # print("")
 
             target_url = url + id_number_or_name
-            # print("target_url::")
-            # print(f"getting url: {target_url}") # for debugging only
-            # print("")
 
-            # print("Response:")
-            # print(response)
-            # print("")
         try:
             response = await session.request(method="GET", url=target_url)
             json_dict = await response.json()
+
         except aiohttp.ContentTypeError:
             return {}
+
         else:
-            # print("response in dict format response.json: ")
-            # print(json_dict) # for debugging only
-            # print("")
+
             return json_dict
 
     @abc.abstractmethod
     async def parse(self, json):
+        """
+        Parses a JSON response dictionary into keyword arguments for object construction.
+
+        Args:
+            json (dict): JSON dictionary to parse.
+
+        Returns:
+            dict: Parsed keyword arguments.
+        """
+
         pass
 
     @abc.abstractmethod
     async def generate_pokedex_object(self, **kwargs):
+        """
+        Constructs and returns a PokedexObject using parsed keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments needed to construct the object.
+
+        Returns:
+            PokedexObject: The constructed domain object.
+        """
+
         pass
 
 
 class AbilityRetriever(Retriever):
+    """
+    Retriever class responsible for fetching and constructing Ability objects.
+    """
 
     async def parse(self, json):
+        """
+        Parses a JSON dictionary into keyword arguments for an Ability object.
+
+        Args:
+            json (dict): API response containing ability data.
+
+        Returns:
+            dict: Parsed keyword arguments.
+        """
+
         kwargs = {}
         try:
             kwargs["name"] = json["name"]
@@ -115,6 +167,16 @@ class AbilityRetriever(Retriever):
 
     @staticmethod
     async def generate_pokedex_object(**kwargs):
+        """
+        Constructs and returns an Ability object from keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments required for Ability construction.
+
+        Returns:
+            Ability: Constructed Ability object or error string on failure.
+        """
+
         try:
             new_ability = Ability(**kwargs)
         except KeyError:
@@ -124,8 +186,21 @@ class AbilityRetriever(Retriever):
 
 
 class MoveRetriever(Retriever):
+    """
+    Retriever class responsible for fetching and constructing Move objects.
+    """
 
     async def parse(self, json):
+        """
+        Parses a JSON dictionary into keyword arguments for a Move object.
+
+        Args:
+            json (dict): API response containing move data.
+
+        Returns:
+            dict: Parsed keyword arguments.
+        """
+
         kwargs = {}
         try:
             kwargs["name"] = json["name"]
@@ -147,6 +222,16 @@ class MoveRetriever(Retriever):
 
     @staticmethod
     async def generate_pokedex_object(**kwargs):
+        """
+        Constructs and returns a Move object from keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments required for Move construction.
+
+        Returns:
+            Move: Constructed Move object or error string on failure.
+        """
+
         try:
             new_move = Move(**kwargs)
         except KeyError:
@@ -156,7 +241,21 @@ class MoveRetriever(Retriever):
 
 
 class PokemonRetriever(Retriever):
+    """
+    Retriever class responsible for fetching and constructing Pokemon objects.
+    """
+
     async def parse(self, json):
+        """
+        Parses a JSON dictionary into keyword arguments for a Pokemon object.
+
+        Args:
+            json (dict): API response containing Pokémon data.
+
+        Returns:
+            dict: Parsed keyword arguments.
+        """
+
         kwargs = {}
         try:
             kwargs["name"] = json["name"]
@@ -190,8 +289,7 @@ class PokemonRetriever(Retriever):
 
             if not self.is_expanded:
                 moves = [(f"Move Name: {move['move']['name']}",
-                          f"Level acquired: {move['version_group_details'][0]
-                                             ['level_learned_at']}") for move in json["moves"]]
+                          f"Level acquired: {move['version_group_details'][0]['level_learned_at']}") for move in json["moves"]]
             else:
                 move_retriever = MoveRetriever()
                 urls = [move["move"]["url"] for move in json["moves"]]
@@ -203,6 +301,16 @@ class PokemonRetriever(Retriever):
             return kwargs
 
     async def generate_pokedex_object(self, **kwargs):
+        """
+        Constructs and returns a Pokemon object from keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments required for Pokemon construction.
+
+        Returns:
+            Pokemon: Constructed Pokemon object or error string on failure.
+        """
+
         try:
             new_pokemon = Pokemon(**kwargs)
         except KeyError:
@@ -212,8 +320,21 @@ class PokemonRetriever(Retriever):
 
 
 class StatRetriever(Retriever):
+    """
+    Retriever class responsible for fetching and constructing Stat objects.
+    """
 
     async def parse(self, json):
+        """
+        Parses a JSON dictionary into keyword arguments for a Stat object.
+
+        Args:
+            json (dict): API response containing stat data.
+
+        Returns:
+            dict: Parsed keyword arguments.
+        """
+
         kwargs = {}
         try:
             kwargs["name"] = json["name"]
@@ -228,7 +349,18 @@ class StatRetriever(Retriever):
                 kwargs["move_damage_class"] = "N/A"
             return kwargs
 
+
     async def generate_pokedex_object(self, **kwargs):
+        """
+        Constructs and returns a Stat object from keyword arguments.
+
+        Args:
+            **kwargs: Keyword arguments required for Stat construction.
+
+        Returns:
+            Stat: Constructed Stat object or error string on failure.
+        """
+
         try:
             new_stat = Stat(**kwargs)
         except KeyError:

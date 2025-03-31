@@ -1,22 +1,63 @@
+# Name: Michael McBride
+# Student number: A01394787
+# Name: Parham Abdolmohammadi
+# Student number: A01356970
+
 import abc
 
 
 class PokedexObject(abc.ABC):
+    """
+    Abstract base class for all Pokédex domain objects, such as Pokemon, Move, Stat, and Ability.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes a PokedexObject with a name and ID.
+
+        Args:
+            **kwargs: Dictionary containing 'name' and 'id' keys.
+        """
+
         self._name = kwargs["name"]
         self._id = kwargs["id"]
 
     @property
     def name(self):
+        """
+        Returns the name of the object.
+
+        Returns:
+            str: The name of the object.
+        """
+
         return self._name
 
     @property
     def id(self):
+        """
+        Returns the ID of the object.
+
+        Returns:
+            int: The ID of the object.
+        """
+
         return self._id
 
 
 class Move(PokedexObject):
+    """
+    Represents a Pokémon move, including its type, power, PP, accuracy, and related metadata.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes a Move object with data from keyword arguments.
+
+        Args:
+            **kwargs: Dictionary containing move attributes.
+        """
+
         super().__init__(**kwargs)
         self._generation = kwargs["generation"]
         self._accuracy = kwargs["accuracy"]
@@ -28,30 +69,44 @@ class Move(PokedexObject):
 
     @property
     def generation(self):
+        """Returns the generation in which the move was introduced."""
+
         return self._generation
 
     @property
     def accuracy(self):
+        """Returns the accuracy of the move."""
+
         return self._accuracy
 
     @property
     def pp(self):
+        """Returns the Power Points (PP) of the move."""
+
         return self._pp
 
     @property
     def power(self):
+        """Returns the power of the move."""
+
         return self._power
 
     @property
     def type(self):
+        """Returns the type of the move (e.g., fire, water, etc.)."""
+
         return self._type
 
     @property
     def damage_class(self):
+        """Returns the damage class of the move (e.g., physical, special)."""
+
         return self._damage_class
 
     @property
     def effect(self):
+        """Returns the short effect description of the move."""
+
         return self._effect
 
     def __str__(self):
@@ -69,12 +124,30 @@ Effect(Short): {self.effect}
 
 
 class Stat(PokedexObject):
+    """
+    Represents a Pokémon stat, such as HP, Attack, or Defense.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes a Stat object with data from keyword arguments.
+
+        Args:
+            **kwargs: Dictionary containing stat attributes.
+        """
+
         super().__init__(**kwargs)
         self._is_battle_only = kwargs["is_battle_only"]
 
     @property
     def is_battle_only(self):
+        """
+        Indicates whether the stat is used exclusively in battle.
+
+        Returns:
+            bool: True if stat is battle-only, False otherwise.
+        """
+
         return self._is_battle_only
 
     def __str__(self):
@@ -86,7 +159,18 @@ Is_Battle_Only: {self.is_battle_only}
 
 
 class Pokemon(PokedexObject):
+    """
+    Represents a Pokémon entity with its stats, abilities, types, and moves.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes a Pokemon object with data from keyword arguments.
+
+        Args:
+            **kwargs: Dictionary containing Pokémon attributes.
+        """
+
         super().__init__(**kwargs)
         self._height = kwargs["height"]
         self._weight = kwargs["weight"]
@@ -96,6 +180,7 @@ class Pokemon(PokedexObject):
         self._moves = kwargs["moves"]  # Should be a list of Move objects
 
     def __str__(self):
+
         types = ""
         for pk_type in self._types:
             types += pk_type + " "
@@ -104,11 +189,8 @@ class Pokemon(PokedexObject):
         abilities = "\n".join([str(ability) for ability in self._abilities])
         moves = "\n".join([str(move) for move in self._moves])
 
-        # moves = ""
-        # for move in self._moves:
-        #     moves += move + "\n\n "
 
-        tala = f"""
+        string = f"""
 Name: {self.name}
 ID: {self.id}
 Height: {self.height}
@@ -129,35 +211,53 @@ Moves:
    
         """
 
-        return tala
+        return string
 
     @property
     def height(self):
+        """Returns the height of the Pokémon."""
+
         return self._height
 
     @property
     def weight(self):
+        """Returns the weight of the Pokémon."""
+
         return self._weight
 
     @property
     def stats(self):
+        """Returns the stats of the Pokémon."""
         return self._stats
 
     @property
     def types(self):
+        """Returns the types of the Pokémon."""
         return self._types
 
     @property
     def abilities(self):
+        """Returns the abilities of the Pokémon."""
         return self._abilities
 
     @property
     def moves(self):
+        """Returns the moves of the Pokémon."""
         return self._moves
 
-
 class Ability(PokedexObject):
+    """
+    Represents a Pokémon ability, including its effects and applicable Pokémon.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes an Ability object with data from keyword arguments.
+
+        Args:
+            **kwargs: Dictionary containing ability attributes.
+        """
+
         super().__init__(**kwargs)
         self._generation = kwargs["generation"]
         self._effect = kwargs["effect"]
@@ -166,18 +266,22 @@ class Ability(PokedexObject):
 
     @property
     def generation(self):
+        """Returns the generation in which the ability was introduced."""
         return self._generation
 
     @property
     def effect(self):
+        """Returns the full effect description of the ability."""
         return self._effect
 
     @property
     def effect_short(self):
+        """Returns the short effect description of the ability."""
         return self._effect_short
 
     @property
     def pokemon(self):
+        """Returns the list of Pokémon that can have this ability."""
         return self._pokemon
 
     def __str__(self):

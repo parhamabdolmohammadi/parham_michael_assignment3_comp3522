@@ -1,5 +1,8 @@
 # Name: Michael McBride
 # Student number: A01394787
+# Name: Parham Abdolmohammadi
+# Student number: A01356970
+
 
 import argparse
 import asyncio
@@ -10,6 +13,17 @@ from retrieverFacade import PokedexRetrieverFacade
 
 
 def setup_request_commandline() -> Request | list[Request]:
+    """
+    Parses command-line arguments to configure and return one or more Request objects.
+
+    Returns:
+        Request | list[Request]: A single or list of Request objects based on user input.
+
+    Exits:
+        The program exits with an error message if required arguments are missing
+        or if the input file format is invalid.
+    """
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("mode", choices=["pokemon", "ability", "move"])
@@ -25,7 +39,7 @@ def setup_request_commandline() -> Request | list[Request]:
     try:
         args = parser.parse_args()
 
-        # Manual mutual exclusivity check for custom message
+
         if args.inputfile and args.inputdata:
             print("Error: You cannot provide both --inputfile and --inputdata at the same time.")
             quit()
@@ -75,12 +89,20 @@ def setup_request_commandline() -> Request | list[Request]:
 
 
 def output_data(file_name, pokedex):
+    """
+    Outputs Pokédex data to the console or writes it to a file.
+
+    Args:
+        file_name (str | None): The name of the output file, or None for console output.
+        pokedex (list): A list of PokedexObject instances to output.
+    """
+
     if file_name is None:
         [print(pokedex_object) for pokedex_object in pokedex]
     else:
         try:
             with open(file_name, "a+") as output_file:
-                output_file.write(f"Timestamp: {time.strftime("%d/%m/%Y %H:%M")}\n")
+                output_file.write(f"Timestamp: {time.strftime('%d/%m/%Y %H:%M')}\n")
                 output_file.write(f"Number of requests: {len(pokedex)}\n\n")
                 [output_file.write(str(pokedex_object)) for pokedex_object in pokedex]
         except IOError:
@@ -90,13 +112,19 @@ def output_data(file_name, pokedex):
 
 
 async def main(requests: list[Request]):
+    """
+    Asynchronously executes the given requests using the PokedexRetrieverFacade.
+
+    Args:
+        requests (list[Request]): A list of Request objects to process.
+
+    Returns:
+        list: A list of PokedexObject instances returned by the retriever.
+    """
+
     retrieve_facade = PokedexRetrieverFacade()
     return await retrieve_facade.execute_request(requests)
 
-    # For Debugging
-    # for request in requests:
-    #     print(request)
-    #     print("")
 
 if __name__ == '__main__':
     request = setup_request_commandline()
