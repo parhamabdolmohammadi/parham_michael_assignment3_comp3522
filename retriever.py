@@ -35,7 +35,7 @@ class Retriever(abc.ABC):
         """
 
         async with aiohttp.ClientSession() as session:
-            self.is_expanded = requests[0].expanded
+            self.is_expanded = requests[0].get_expanded()
 
             pokedex_object_coroutines = [self.get_request(url, request, session) for request in requests]
 
@@ -91,7 +91,7 @@ class Retriever(abc.ABC):
             target_url = url
 
         else:
-            id_number_or_name = request.input_data
+            id_number_or_name = request.get_input_data()
 
             target_url = url + id_number_or_name
 

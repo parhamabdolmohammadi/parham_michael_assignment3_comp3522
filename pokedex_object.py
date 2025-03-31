@@ -137,7 +137,7 @@ class Stat(PokedexObject):
         """
 
         super().__init__(**kwargs)
-        self._is_battle_only = kwargs["is_battle_only"]
+        self.__is_battle_only = kwargs["is_battle_only"]
 
     @property
     def is_battle_only(self):
@@ -148,7 +148,7 @@ class Stat(PokedexObject):
             bool: True if stat is battle-only, False otherwise.
         """
 
-        return self._is_battle_only
+        return self.__is_battle_only
 
     def __str__(self):
         return f"""
@@ -172,22 +172,22 @@ class Pokemon(PokedexObject):
         """
 
         super().__init__(**kwargs)
-        self._height = kwargs["height"]
-        self._weight = kwargs["weight"]
-        self._stats = kwargs["stats"]  # Should be a list of Stat objects
-        self._types = kwargs["types"]  # Should be a list of String
-        self._abilities = kwargs["abilities"]  # Should be a list of Ability objects
-        self._moves = kwargs["moves"]  # Should be a list of Move objects
+        self.__height = kwargs["height"]
+        self.__weight = kwargs["weight"]
+        self.__stats = kwargs["stats"]  # Should be a list of Stat objects
+        self.__types = kwargs["types"]  # Should be a list of String
+        self.__abilities = kwargs["abilities"]  # Should be a list of Ability objects
+        self.__moves = kwargs["moves"]  # Should be a list of Move objects
 
     def __str__(self):
 
         types = ""
-        for pk_type in self._types:
+        for pk_type in self.__types:
             types += pk_type + " "
 
-        stats = "\n".join([str(stat) for stat in self._stats])
-        abilities = "\n".join([str(ability) for ability in self._abilities])
-        moves = "\n".join([str(move) for move in self._moves])
+        stats = "\n".join([str(stat) for stat in self.__stats])
+        abilities = "\n".join([str(ability) for ability in self.__abilities])
+        moves = "\n".join([str(move) for move in self.__moves])
 
 
         string = f"""
@@ -217,33 +217,33 @@ Moves:
     def height(self):
         """Returns the height of the Pokémon."""
 
-        return self._height
+        return self.__height
 
     @property
     def weight(self):
         """Returns the weight of the Pokémon."""
 
-        return self._weight
+        return self.__weight
 
     @property
     def stats(self):
         """Returns the stats of the Pokémon."""
-        return self._stats
+        return self.__stats
 
     @property
     def types(self):
         """Returns the types of the Pokémon."""
-        return self._types
+        return self.__types
 
     @property
     def abilities(self):
         """Returns the abilities of the Pokémon."""
-        return self._abilities
+        return self.__abilities
 
     @property
     def moves(self):
         """Returns the moves of the Pokémon."""
-        return self._moves
+        return self.__moves
 
 class Ability(PokedexObject):
     """
@@ -259,30 +259,30 @@ class Ability(PokedexObject):
         """
 
         super().__init__(**kwargs)
-        self._generation = kwargs["generation"]
-        self._effect = kwargs["effect"]
-        self._effect_short = kwargs["effect_short"]
-        self._pokemon = kwargs["pokemon"]  # Should be a list of Strings
+        self.__generation = kwargs["generation"]
+        self.__effect = kwargs["effect"]
+        self.__effect_short = kwargs["effect_short"]
+        self.__pokemon = kwargs["pokemon"]  # Should be a list of Strings
 
     @property
     def generation(self):
         """Returns the generation in which the ability was introduced."""
-        return self._generation
+        return self.__generation
 
     @property
     def effect(self):
         """Returns the full effect description of the ability."""
-        return self._effect
+        return self.__effect
 
     @property
     def effect_short(self):
         """Returns the short effect description of the ability."""
-        return self._effect_short
+        return self.__effect_short
 
     @property
     def pokemon(self):
         """Returns the list of Pokémon that can have this ability."""
-        return self._pokemon
+        return self.__pokemon
 
     def __str__(self):
         return f"""

@@ -29,7 +29,7 @@ class PokedexRetrieverFacade:
         Initializes the PokedexRetrieverFacade with an empty list to store Pokédex data.
         """
 
-        self.pokedex_data: list[PokedexObject] = []
+        self.__pokedex_data: list[PokedexObject] = []
 
     async def execute_request(self, requests: list[Request]):
         """
@@ -42,11 +42,11 @@ class PokedexRetrieverFacade:
             list[PokedexObject]: A list of PokedexObject instances retrieved from the API.
         """
 
-        mode = requests[0].mode
+        mode = requests[0].get_mode()
         retriever_information = self.RETRIEVERS[mode]
-        self.retriever = retriever_information[0]
+        self.__retriever = retriever_information[0]
         url = retriever_information[1]
 
-        self.pokedex_data = await self.retriever.fetch_data(url, requests)
+        self.__pokedex_data = await self.__retriever.fetch_data(url, requests)
 
-        return self.pokedex_data
+        return self.__pokedex_data

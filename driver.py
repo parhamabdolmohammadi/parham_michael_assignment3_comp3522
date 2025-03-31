@@ -57,12 +57,11 @@ def setup_request_commandline() -> Request | list[Request]:
 
         if args.inputdata:
             new_request = Request()
-            new_request.mode = args.mode
-            new_request.input_file = args.inputfile
-            new_request.input_data = args.inputdata
-            new_request.expanded = args.expanded
-            new_request.output_file = args.output
-            new_request.isFromFile = False
+            new_request.set_mode(args.mode)
+            new_request.set_input_data(args.inputdata)
+            new_request.set_expanded(args.expanded)
+            new_request.set_output_file(args.output)
+            new_request.set_is_from_file(False)
 
             requests.append(new_request)
 
@@ -74,11 +73,11 @@ def setup_request_commandline() -> Request | list[Request]:
 
                     if line != "":
                         new_request = Request()
-                        new_request.mode = args.mode
-                        new_request.input_data = line
-                        new_request.expanded = args.expanded
-                        new_request.output_file = args.output
-                        new_request.isFromFile = False
+                        new_request.set_mode(args.mode)
+                        new_request.set_input_data(line)
+                        new_request.set_expanded(args.expanded)
+                        new_request.set_output_file(args.output)
+                        new_request.set_is_from_file(True)
                         requests.append(new_request)
 
         return requests
@@ -129,4 +128,4 @@ async def main(requests: list[Request]):
 if __name__ == '__main__':
     request = setup_request_commandline()
     pokedex_data = asyncio.run(main(request))
-    output_data(request[0].output_file, pokedex_data)
+    output_data(request[0].get_output_file(), pokedex_data)
