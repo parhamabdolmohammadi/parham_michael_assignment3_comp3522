@@ -97,6 +97,8 @@ def output_data(file_name, pokedex):
     """
 
     if file_name is None:
+        print(f"Timestamp: {time.strftime('%d/%m/%Y %H:%M')}\n")
+        print(f"Number of Requests: {len(pokedex)}\n\n")
         [print(pokedex_object) for pokedex_object in pokedex]
     else:
         try:
