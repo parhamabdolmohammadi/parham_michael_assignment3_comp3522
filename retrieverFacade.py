@@ -3,9 +3,9 @@
 # Name: Parham Abdolmohammadi
 # Student number: A01356970
 
-from pokedex_object import PokedexObject
-from request import Request
-from retriever import PokemonRetriever, AbilityRetriever, MoveRetriever, Retriever
+from pokeretriever.pokedex_object import PokedexObject
+from pokeretriever.request import Request
+from pokeretriever.retriever import PokemonRetriever, AbilityRetriever, MoveRetriever, Retriever
 
 
 class PokedexRetrieverFacade:

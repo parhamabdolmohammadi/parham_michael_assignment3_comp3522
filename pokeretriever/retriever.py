@@ -1,7 +1,7 @@
 import abc
 import aiohttp
 import asyncio
-from pokedex_object import Ability, Pokemon, Move, Stat
+from pokeretriever.pokedex_object import Ability, Pokemon, Move, Stat
 
 # Name: Michael McBride
 # Student number: A01394787

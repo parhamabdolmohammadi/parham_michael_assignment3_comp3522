@@ -22,9 +22,10 @@ This is an **asynchronous, object-oriented Pokédex application** developed for 
 ```bash
 .
 ├── main.py                 # Entry point, handles CLI & runs the app
-├── request.py              # Defines the Request class
-├── pokedex_object.py       # Contains domain models (Pokemon, Move, Stat, Ability)
-├── retriever.py            # Abstract base class + all retriever subclasses
+├── pokeretriever               # package that handles a Request to get a JSON response to generate a PokedexObject
+│   ├── request.py              # Defines the Request class
+│   ├── pokedex_object.py       # Contains domain models (Pokemon, Move, Stat, Ability)
+│   └── retriever.py            # Abstract base class + all retriever subclasses
 ├── retrieverFacade.py      # Facade to delegate request execution
 └── requirements.txt        # (Optional) Required libraries
 ```

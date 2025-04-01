@@ -8,7 +8,7 @@ import argparse
 import asyncio
 import time
 
-from request import Request
+from pokeretriever.request import Request
 from retrieverFacade import PokedexRetrieverFacade
 
 
